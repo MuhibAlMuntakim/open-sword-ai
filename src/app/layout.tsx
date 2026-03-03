@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   description: 'An AI assistant that reads emails, ghostwrites drafts, and schedules events.',
 }
 
+import { Toaster } from "@/components/ui/toaster"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,6 +33,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
