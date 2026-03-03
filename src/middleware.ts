@@ -8,9 +8,9 @@ const isPublicRoute = createRouteMatcher([
     '/api/agent/run(.*)', // Cron job endpoint - secured via CRON_SECRET, not Clerk user session
 ])
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
     if (!isPublicRoute(req)) {
-        auth().protect()
+        await auth.protect()
     }
 })
 
