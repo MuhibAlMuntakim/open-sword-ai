@@ -7,7 +7,7 @@ export default function Page() {
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10 animate-pulse-glow" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -z-10" />
 
-            <SignIn appearance={{
+            <SignIn path="/sign-in" appearance={{
                 elements: {
                     card: "glass border-white/5",
                     headerTitle: "text-white font-light",
