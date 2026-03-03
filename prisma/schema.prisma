@@ -1,0 +1,90 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id               String   @id // Clerk User ID
+  email            String   @unique
+  subscriptionTier Tier     @default(FREE)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  lastActiveAt     DateTime @default(now())
+
+  googleAuthTokens  GoogleOAuthToken[]
+  agentLogs         AgentLog[]
+  emailDrafts       EmailDraft[]
+  calendarEvents    CalendarEventDraft[]
+}
+
+enum Tier {
+  FREE
+  PRO
+}
+
+model GoogleOAuthToken {
+  id           String   @id @default(uuid())
+  userId       String   @unique // One token set per user for now
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken  String // Encrypted
+  refreshToken String // Encrypted
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AgentLog {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status       LogStatus
+  actionsTaken Json      @default("[]") // Array of strings describing actions
+  tokensUsed   Int       @default(0)
+  errorMessage String?
+  executedAt   DateTime  @default(now())
+}
+
+enum LogStatus {
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+model EmailDraft {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messageId String // Original email message ID
+  threadId  String
+  subject   String
+  body      String // Ghostwritten draft
+  status    DraftStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+enum DraftStatus {
+  PENDING
+  APPROVED
+  DISCARDED
+}
+
+model CalendarEventDraft {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  attendees   Json        @default("[]") // Array of email strings
+  status      DraftStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
