@@ -4,6 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import prisma from "@/lib/prisma";
 
+interface AgentLog {
+    id: string;
+    status: string;
+    actionsTaken: any;
+    executedAt: Date;
+}
+
 export default async function DashboardPage() {
     const { userId } = await auth();
 
@@ -84,14 +91,15 @@ export default async function DashboardPage() {
                             </div>
                         ) : (
                             <div className="divide-y divide-white/5">
-                                {logs.map((log: any) => (
+                                {logs.map((log: AgentLog) => (
                                     <div key={log.id} className="p-4 hover:bg-white/[0.02] flex items-center justify-between transition-colors">
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-2 mb-1">
                                                 <Badge variant={log.status === 'SUCCESS' ? 'default' : log.status === 'FAILED' ? 'destructive' : 'secondary'} className="text-[10px] h-5 glass border-white/10">
                                                     {log.status}
                                                 </Badge>
-                                                <p className="text-sm text-zinc-400">Scan your inbox and schedule your week with AI. It&apos;s time to be productive.</p></div>
+                                                <span className="text-sm text-zinc-300">Agent Execution Run</span>
+                                            </div>
                                             <span className="text-xs text-zinc-500 mt-1">
                                                 {(log.actionsTaken as string[]).join(", ") || "No actionable context found."}
                                             </span>

@@ -2,8 +2,16 @@ import { auth } from "@clerk/nextjs/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import prisma from "@/lib/prisma";
-import { Shield, Database, Key } from "lucide-react";
+import { Mail } from "lucide-react";
 import { DraftActions } from "@/components/draft-actions";
+
+interface EmailDraft {
+    id: string;
+    subject: string;
+    body: string;
+    status: string;
+    createdAt: Date;
+}
 
 export default async function EmailsPage() {
     const { userId } = await auth();
@@ -31,12 +39,13 @@ export default async function EmailsPage() {
                         </CardContent>
                     </Card>
                 ) : (
-                    drafts.map((draft: any) => (
+                    drafts.map((draft: EmailDraft) => (
                         <Card key={draft.id} className="glass shadow-none border-white/5 hover:bg-white/[0.02] transition">
                             <CardHeader className="py-4">
                                 <div className="flex justify-between items-start">
                                     <div>
                                         <CardTitle className="text-md font-medium text-white flex gap-3 items-center">
+                                            <Mail className="h-4 w-4 text-zinc-400" />
                                             {draft.subject || "No Subject"}
                                             <Badge variant={draft.status === "PENDING" ? "secondary" : "default"} className="ml-2 h-5 text-[10px] uppercase font-semibold">
                                                 {draft.status}
@@ -50,7 +59,6 @@ export default async function EmailsPage() {
                                 </div>
                             </CardHeader>
                             <CardContent className="py-0 pb-4">
-                                <p className="text-sm text-zinc-400">Scan your inbox and schedule your week with AI. It's time to be productive.</p>
                                 <div className="text-sm text-zinc-300 whitespace-pre-wrap bg-background/50 p-4 rounded-xl border border-white/5 font-mono">
                                     {draft.body}
                                 </div>
